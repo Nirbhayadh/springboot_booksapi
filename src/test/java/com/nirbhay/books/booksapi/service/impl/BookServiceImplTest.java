@@ -1,5 +1,6 @@
 package com.nirbhay.books.booksapi.service.impl;
 
+import com.nirbhay.books.booksapi.TestData;
 import com.nirbhay.books.booksapi.domain.Book;
 import com.nirbhay.books.booksapi.domain.BookEntity;
 import com.nirbhay.books.booksapi.repository.BookRepository;
@@ -26,17 +27,9 @@ public class BookServiceImplTest {
 
     @Test
     public void testThatBookIsSaved(){
-        final Book book= Book.builder()
-                .title("Harry Potter")
-                .isbn("123456")
-                .author("JK Rowling")
-                .build();
+        final Book book= TestData.testBook();
 
-        final BookEntity bookEntity= BookEntity.builder()
-                .title("Harry Potter")
-                .isbn("123456")
-                .author("JK Rowling")
-                .build();
+        final BookEntity bookEntity= TestData.testBookEntity();
 
         when(bookRepository.save(bookEntity)).thenReturn(bookEntity);
 
