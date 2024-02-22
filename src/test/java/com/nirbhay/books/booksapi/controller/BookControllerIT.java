@@ -30,7 +30,7 @@ public class BookControllerIT {
         final Book book= TestData.testBook();
         final ObjectMapper objectMapper= new ObjectMapper();
         final String bookJson= objectMapper.writeValueAsString(book);
-        mockMvc.perform(MockMvcRequestBuilders.put("/book/"+ book.getIsbn())
+        mockMvc.perform(MockMvcRequestBu    ilders.put("/book/"+ book.getIsbn())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(bookJson))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(book.getIsbn()))
