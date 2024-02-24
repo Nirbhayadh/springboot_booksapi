@@ -11,8 +11,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import static com.nirbhay.books.booksapi.TestData.testBookEntity;
 import static javax.management.Query.eq;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -32,7 +35,7 @@ public class BookServiceImplTest {
     public void testThatBookIsSaved(){
         final Book book= TestData.testBook();
 
-        final BookEntity bookEntity= TestData.testBookEntity();
+        final BookEntity bookEntity= testBookEntity();
 
         when(bookRepository.save(bookEntity)).thenReturn(bookEntity);
 
@@ -53,7 +56,7 @@ public class BookServiceImplTest {
     @Test
     public void testThatFindByIdReturnsBookWhenExists(){
         final Book book= TestData.testBook();
-        final BookEntity bookEntity= TestData.testBookEntity();
+        final BookEntity bookEntity= testBookEntity();
 
 
 
@@ -61,6 +64,21 @@ public class BookServiceImplTest {
 
         final Optional<Book>  result= bookServiceImplTest.findById(book.getIsbn());
         assertEquals(Optional.of(book),result);
+    }
+
+    @Test
+    public void testListBooksReturnsEmptyListWhenNoBooksExist(){
+        when(bookRepository.findAll()).thenReturn(new ArrayList<BookEntity>());
+        final List<Book> result = bookServiceImplTest.listBooks();
+        assertEquals(0,result.size());
+    }
+
+    @Test
+    public void testListBooksReturnsBooksWhenExist(){
+        final BookEntity bookEntity= TestData.testBookEntity();
+        when(bookRepository.findAll()).thenReturn(List.of(bookEntity));
+        final List<Book> result = bookServiceImplTest.listBooks();
+        assertEquals(1,result.size());
     }
 
 }
