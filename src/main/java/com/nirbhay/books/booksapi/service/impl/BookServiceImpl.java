@@ -7,6 +7,8 @@ import com.nirbhay.books.booksapi.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -23,6 +25,8 @@ public class BookServiceImpl implements BookService {
         return bookEntityToBook(savedBookEntity);
     }
 
+
+
     private BookEntity bookToBookEntity(Book book){
         return BookEntity.builder()
                 .title(book.getTitle())
@@ -37,5 +41,11 @@ public class BookServiceImpl implements BookService {
                 .author(bookEntity.getAuthor())
                 .isbn(bookEntity.getIsbn())
                 .build();
+    }
+
+    @Override
+    public Optional<Book> findById(String isbn) {
+        final Optional<BookEntity> foundbook= bookRepository.findById(isbn);
+        return foundbook.map(book ->bookEntityToBook(book));
     }
 }

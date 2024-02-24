@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nirbhay.books.booksapi.TestData;
 import com.nirbhay.books.booksapi.domain.Book;
+import com.nirbhay.books.booksapi.service.BookService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -25,18 +26,40 @@ public class BookControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private BookService bookService;
+
     @Test
     public void testThatBookIsCreated() throws Exception {
         final Book book= TestData.testBook();
         final ObjectMapper objectMapper= new ObjectMapper();
         final String bookJson= objectMapper.writeValueAsString(book);
-        mockMvc.perform(MockMvcRequestBu    ilders.put("/book/"+ book.getIsbn())
+        mockMvc.perform(MockMvcRequestBuilders.put("/book/"+ book.getIsbn())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(bookJson))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(book.getIsbn()))
                         .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(book.getTitle()))
                                 .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(book.getAuthor())
         );
+    }
+
+    @Test
+    public void testThatRetrieveBookReturns484WhenNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/books/9876543210"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testThatRetrieveBookReturnsHttp200AndBookWhenFound() throws Exception{
+
+        final Book book= TestData.testBook();
+        bookService.createBook(book);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/books/"+ book.getIsbn()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(book.getIsbn()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(book.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(book.getAuthor()));
     }
 
 }
